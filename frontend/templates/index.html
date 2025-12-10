@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Real Estate Lead Triage — Dashboard</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-50 text-slate-800">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-emerald-500 to-teal-400 text-white shadow">
+    <div class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Real Estate Lead Triage</h1>
+        <p class="text-sm opacity-90 mt-1">Score, classify and prioritize incoming leads — in-memory demo</p>
+      </div>
+      <div class="flex gap-3 items-center">
+        <div class="text-sm bg-white/10 px-3 py-2 rounded-md">In-memory • No DB</div>
+        <button id="processBtnTop" class="bg-white text-emerald-600 px-4 py-2 rounded-md shadow hover:opacity-95">Load & Process</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-6xl mx-auto px-6 py-6">
+    <!-- Controls -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2">
+        <div class="bg-white p-4 rounded-xl shadow-sm flex gap-3 items-center">
+          <input id="searchInput" placeholder="Search name, message or source..." class="flex-1 border rounded-lg px-4 py-2 focus:outline-none" />
+          <select id="tierFilter" class="border rounded-lg px-3 py-2">
+            <option value="all">All tiers</option>
+            <option value="hot">Hot</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="junk">Junk</option>
+          </select>
+          <input id="pathInput" placeholder="Optional CSV path (leave blank to use test CSV)" class="border rounded-lg px-3 py-2 w-full max-w-xs" />
+          <button id="processBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-lg shadow hover:opacity-95">Load & Process</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="bg-white p-4 rounded-xl shadow-sm">
+          <div class="text-sm text-slate-500">Leads processed</div>
+          <div id="leadsCount" class="text-2xl font-semibold mt-1">0</div>
+          <div id="lastRun" class="text-xs text-slate-400 mt-1">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard: Chart + Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-medium">Hot Leads by Source</h2>
+          <div class="text-sm text-slate-500">Shows count of leads classified as <span class="font-semibold">hot</span></div>
+        </div>
+        <div class="h-64">
+          <canvas id="hotChart"></canvas>
+        </div>
+        <div id="chartEmpty" class="text-center text-slate-400 mt-3 hidden">No hot leads to display</div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-sm">
+        <h3 class="font-medium mb-2">Summary</h3>
+        <div id="summaryList" class="space-y-3 text-sm text-slate-700">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Leads table -->
+    <div class="bg-white rounded-xl shadow-sm p-4">
+      <div class="mb-3 flex items-center justify-between">
+        <h3 class="font-medium">Leads</h3>
+        <div class="text-sm text-slate-500">Click <span class="font-semibold">Open</span> to view details</div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="px-4 py-3 text-left">Name</th>
+              <th class="px-4 py-3 text-left">Type</th>
+              <th class="px-4 py-3 text-left">Budget</th>
+              <th class="px-4 py-3 text-left">Tier</th>
+              <th class="px-4 py-3 text-left">Score</th>
+              <th class="px-4 py-3 text-left">Intent</th>
+              <th class="px-4 py-3 text-left">Action</th>
+              <th class="px-4 py-3 text-left">View</th>
+            </tr>
+          </thead>
+          <tbody id="leadsBody" class="divide-y"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-3 border-b">
+          <h4 class="font-semibold">Lead Details</h4>
+          <div>
+            <button id="closeModalTop" class="text-slate-500 hover:text-slate-700 px-2">Close</button>
+          </div>
+        </div>
+        <div class="p-5">
+          <pre id="leadJson" class="bg-slate-50 p-3 rounded text-sm max-h-[60vh] overflow-auto"></pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
