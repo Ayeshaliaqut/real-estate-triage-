@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let hotChart = null;
   let currentLeads = [];
 
-  //button click handelers
+  // BUTTON CLICK HANDLERS
   processBtn.addEventListener("click", () => loadAndProcess());
   processBtnTop.addEventListener("click", () => loadAndProcess());
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const info = await resp.json();
 
-      // fetch processed leads
+      // Fetch processed leads
       const leadsResp = await fetch("/api/leads");
       const leadsData = await leadsResp.json();
       currentLeads = leadsData.leads || [];
@@ -63,10 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function disableButtons(state) {
     const text = state ? "Processing..." : "Load & Process";
-    processBtn.disabled =
-    processBtnTop.disabled = state;
-    processBtn.textContent =
-    processBtnTop.textContent = text;
+    processBtn.disabled = processBtnTop.disabled = state;
+    processBtn.textContent = processBtnTop.textContent = text;
   }
 
   // FILTER + SEARCH
@@ -89,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     renderLeads(filtered);
   }
+
   // RENDER LEADS TABLE
   function renderLeads(leads) {
     leadsBody.innerHTML = "";
@@ -101,11 +100,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     leads.forEach((l, idx) => {
       const tr = document.createElement("tr");
+
+      let tierClass = "";
+      if (l.tier === "hot") tierClass = "bg-red-50";
+      else if (l.tier === "medium") tierClass = "bg-amber-50";
+      else if (l.tier === "low") tierClass = "bg-yellow-50";
+      else if (l.tier === "junk") tierClass = "bg-slate-100";
+
+      tr.className = tierClass;
+
       tr.innerHTML = `
         <td class="px-4 py-3">${l.name || "—"}</td>
         <td class="px-4 py-3">${l.property_type || "—"}</td>
         <td class="px-4 py-3">${l.budget || "—"}</td>
-        <td class="px-4 py-3">${l.tier || "—"}</td>
+        <td class="px-4 py-3 font-semibold capitalize">${l.tier || "—"}</td>
         <td class="px-4 py-3">${l.qualification_score || 0}</td>
         <td class="px-4 py-3">${l.intent_label || "—"}</td>
         <td class="px-4 py-3">${l.recommended_action || "—"}</td>
@@ -118,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
       leadsBody.appendChild(tr);
     });
 
-    // wire modal buttons
+    // Wire modal buttons
     document.querySelectorAll(".openBtn").forEach(btn => {
       btn.addEventListener("click", () => {
         const idx = Number(btn.dataset.idx);
@@ -138,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // summary rows
     report.forEach(r => {
       summaryList.innerHTML += `
         <div class="flex justify-between text-sm">
@@ -150,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderChart(report);
   }
-  // CHART CODE -fixed
+  // CHART RENDERING 
   function destroyChart() {
     if (hotChart) {
       try { hotChart.destroy(); } catch {}
@@ -166,6 +173,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const values = report.map(r => r.hot_count);
 
     const ctx = chartCanvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "rgba(16,185,129,1)");   
+    gradient.addColorStop(1, "rgba(45,212,191,1)");   
+
     hotChart = new Chart(ctx, {
       type: "bar",
       data: {
@@ -173,11 +185,24 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Hot Leads",
           data: values,
-          backgroundColor: "rgba(16,185,129,0.9)",
-          borderRadius: 6
+          backgroundColor: gradient,
+          borderRadius: 8,
+          borderSkipped: false
         }]
       },
-      options: { responsive: true, maintainAspectRatio: false }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 }
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
     });
   }
   // MODAL CLOSE
