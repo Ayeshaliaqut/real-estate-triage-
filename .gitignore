@@ -1,4 +1,4 @@
-# Environment variables (IMPORTANT: Protects your API keys)
+# API keys and secrets
 .env
 .env.local
 .env.*.local
@@ -9,12 +9,28 @@ __pycache__/
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual Environment
+# Virtual environments
 .venv/
 venv/
-ENV/
 env/
+ENV/
 env.bak/
 venv.bak/
 
@@ -23,30 +39,6 @@ venv.bak/
 .idea/
 *.swp
 *.swo
-*.swn
-.DS_Store
-
-# Logs
-*.log
-logs/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pytest
-.pytest_cache/
-.coverage
-htmlcov/
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
 
 # OS
 .DS_Store
@@ -56,31 +48,27 @@ dmypy.json
 .Trashes
 ehthumbs.db
 Thumbs.db
-Desktop.ini
+
+# Logs
+*.log
+logs/
 
 # Temporary files
 *.tmp
-*.bak
-*.swp
-*~
+*.temp
 
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
-.eggs/
+# Test files
+test_output/
+coverage/
 
-# Unit test / coverage
-.tox/
-.nox/
-.coverage
-.cache
-nosetests.xml
-coverage.xml
-*.cover
+# Database
+*.db
+*.sqlite3
 
-# PyCharm
-.idea/
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# Rope
-.ropeproject
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
